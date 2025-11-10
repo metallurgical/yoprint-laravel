@@ -12,6 +12,8 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\CsvProcessedNotification;
 
 class ProcessCsvUpload implements ShouldQueue
 {
@@ -193,6 +195,11 @@ class ProcessCsvUpload implements ShouldQueue
             }
 
             $upload->update(['status' => 'completed']);
+
+            // Optionally notify user here about completion
+            // Commented out to avoid sending email during tests, but here is the piece to do so:
+            // Notification::route('mail', 'norlihazmey.ghazali@gmail.com')->notify(new CsvProcessedNotification($upload));
+
         } catch (Throwable $e) {
             $upload->update([
                 'status' => 'failed',
